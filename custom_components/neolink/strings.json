@@ -1,0 +1,135 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Neolink bridge",
+        "description": "Address of the Neolink bridge with the WebSocket API (ws-rtsp mode).",
+        "data": {
+          "host": "Host",
+          "port": "WebSocket port",
+          "token": "Token",
+          "rtsp_port": "RTSP port",
+          "rtsp_username": "RTSP username",
+          "rtsp_password": "RTSP password"
+        }
+      },
+      "hassio_confirm": {
+        "title": "Neolink app",
+        "description": "Set up the Neolink bridge discovered at {host}?"
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to the bridge.",
+      "invalid_auth": "The bridge rejected the token."
+    },
+    "abort": {
+      "already_configured": "This bridge is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "battery_temperature": {
+        "name": "Battery temperature"
+      },
+      "battery_voltage": {
+        "name": "Battery voltage"
+      },
+      "last_motion": {
+        "name": "Last motion"
+      },
+      "snapshot_at": {
+        "name": "Last snapshot"
+      },
+      "storage_used": {
+        "name": "SD card used"
+      },
+      "storage_free": {
+        "name": "SD card free"
+      },
+      "storage_total": {
+        "name": "SD card capacity"
+      },
+      "signal_level": {
+        "name": "4G signal"
+      },
+      "signal_value": {
+        "name": "4G signal value"
+      },
+      "mobile_operator": {
+        "name": "Mobile operator"
+      },
+      "last_detection": {
+        "name": "Last detection",
+        "state": {
+          "person": "Person",
+          "vehicle": "Vehicle",
+          "animal": "Animal",
+          "motion": "Motion",
+          "other": "Other"
+        }
+      }
+    },
+    "binary_sensor": {
+      "link": {
+        "name": "Camera link"
+      }
+    },
+    "switch": {
+      "led": {
+        "name": "Status LED"
+      },
+      "pir": {
+        "name": "PIR sensor"
+      },
+      "pir_reduce_false_alarm": {
+        "name": "Reduce false alarms"
+      },
+      "recording": {
+        "name": "Recording"
+      },
+      "alarm_sound": {
+        "name": "Alarm sound on detection"
+      },
+      "push_enabled": {
+        "name": "Push notifications"
+      }
+    },
+    "select": {
+      "ir": {
+        "name": "Infrared",
+        "state": {
+          "auto": "Auto",
+          "on": "On",
+          "off": "Off"
+        }
+      },
+      "post_record": {
+        "name": "Post-detection recording"
+      }
+    },
+    "button": {
+      "siren": {
+        "name": "Siren"
+      },
+      "refresh": {
+        "name": "Refresh state"
+      },
+      "snapshot": {
+        "name": "Take snapshot"
+      }
+    },
+    "number": {
+      "pir_sensitivity": {
+        "name": "PIR sensitivity"
+      }
+    },
+    "image": {
+      "last_snapshot": {
+        "name": "Last snapshot"
+      },
+      "last_event": {
+        "name": "Last event"
+      }
+    }
+  }
+}
