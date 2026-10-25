@@ -1,0 +1,135 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mostek Neolink",
+        "description": "Adres mostka Neolink z API WebSocket (tryb ws-rtsp).",
+        "data": {
+          "host": "Host",
+          "port": "Port WebSocket",
+          "token": "Token",
+          "rtsp_port": "Port RTSP",
+          "rtsp_username": "Użytkownik RTSP",
+          "rtsp_password": "Hasło RTSP"
+        }
+      },
+      "hassio_confirm": {
+        "title": "Aplikacja Neolink",
+        "description": "Skonfigurować mostek Neolink wykryty pod adresem {host}?"
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie można połączyć się z mostkiem.",
+      "invalid_auth": "Mostek odrzucił token."
+    },
+    "abort": {
+      "already_configured": "Ten mostek jest już skonfigurowany."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "battery_temperature": {
+        "name": "Temperatura baterii"
+      },
+      "battery_voltage": {
+        "name": "Napięcie baterii"
+      },
+      "last_motion": {
+        "name": "Ostatni ruch"
+      },
+      "snapshot_at": {
+        "name": "Ostatnie zdjęcie"
+      },
+      "storage_used": {
+        "name": "Karta pamięci zajęta"
+      },
+      "storage_free": {
+        "name": "Karta pamięci wolne"
+      },
+      "storage_total": {
+        "name": "Karta pamięci pojemność"
+      },
+      "signal_level": {
+        "name": "Sygnał 4G"
+      },
+      "signal_value": {
+        "name": "Sygnał 4G (wartość)"
+      },
+      "mobile_operator": {
+        "name": "Operator"
+      },
+      "last_detection": {
+        "name": "Ostatnie wykrycie",
+        "state": {
+          "person": "Osoba",
+          "vehicle": "Pojazd",
+          "animal": "Zwierzę",
+          "motion": "Ruch",
+          "other": "Inne"
+        }
+      }
+    },
+    "binary_sensor": {
+      "link": {
+        "name": "Połączenie kamery"
+      }
+    },
+    "switch": {
+      "led": {
+        "name": "Dioda statusu"
+      },
+      "pir": {
+        "name": "Czujnik PIR"
+      },
+      "pir_reduce_false_alarm": {
+        "name": "Redukcja fałszywych alarmów"
+      },
+      "recording": {
+        "name": "Nagrywanie"
+      },
+      "alarm_sound": {
+        "name": "Dźwięk alarmu przy wykryciu"
+      },
+      "push_enabled": {
+        "name": "Powiadomienia push"
+      }
+    },
+    "select": {
+      "ir": {
+        "name": "Podczerwień",
+        "state": {
+          "auto": "Automatycznie",
+          "on": "Włączona",
+          "off": "Wyłączona"
+        }
+      },
+      "post_record": {
+        "name": "Nagrywanie po wykryciu"
+      }
+    },
+    "button": {
+      "siren": {
+        "name": "Syrena"
+      },
+      "refresh": {
+        "name": "Odśwież stan"
+      },
+      "snapshot": {
+        "name": "Zrób zdjęcie"
+      }
+    },
+    "number": {
+      "pir_sensitivity": {
+        "name": "Czułość PIR"
+      }
+    },
+    "image": {
+      "last_snapshot": {
+        "name": "Ostatnie zdjęcie"
+      },
+      "last_event": {
+        "name": "Ostatnie zdarzenie"
+      }
+    }
+  }
+}
