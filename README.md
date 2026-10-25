@@ -69,6 +69,9 @@ installation takes over the existing entry, so your devices and entity ids stay 
 
 ## Entities
 
+Entity IDs are English in every Home Assistant language (e.g. `sensor.<camera>_battery` also in
+a Polish installation, not `sensor.<kamera>_bateria`); the displayed names are translated.
+
 Each camera configured in the app becomes a device. Entities are created only for features the
 camera and the bridge report.
 

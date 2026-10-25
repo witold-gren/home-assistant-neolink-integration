@@ -70,6 +70,10 @@ encji pozostaną bez zmian.
 
 ## Encje
 
+Identyfikatory encji są angielskie w każdym języku Home Assistant (np. `sensor.<camera>_battery`
+także w polskiej instalacji, a nie `sensor.<kamera>_bateria`); nazwy wyświetlane są
+przetłumaczone.
+
 Każda kamera skonfigurowana w aplikacji staje się urządzeniem. Encje są tworzone tylko dla funkcji,
 które zgłaszają kamera i most.
 

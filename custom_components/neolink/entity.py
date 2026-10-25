@@ -10,6 +10,7 @@ from homeassistant.helpers.entity import Entity
 
 from .api import CameraState, NeolinkClient, NeolinkError
 from .const import DOMAIN
+from .entity_ids import english_object_id
 
 
 class NeolinkEntity(Entity):
@@ -32,6 +33,16 @@ class NeolinkEntity(Entity):
             sw_version=state.get("firmware"),
             hw_version=state.get("hardware"),
             serial_number=state.get("serial"),
+        )
+
+    @property
+    def suggested_object_id(self) -> str | None:
+        """English name for the entity id in every HA language (the shown name is translated)."""
+        return english_object_id(
+            self.platform.domain,
+            self.translation_key,
+            self.device_class,
+            super().suggested_object_id,
         )
 
     @property

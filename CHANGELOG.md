@@ -2,6 +2,8 @@
 
 ## 0.1.1 - 2026-10-25
 
+- Entity ids are English in every Home Assistant language (`sensor.<camera>_battery` instead of
+  `sensor.<kamera>_bateria` in a Polish installation); displayed names stay translated.
 - Dark-theme brand images (`dark_icon`, `dark_logo`); `logo@2x.png` is now exactly twice
   the size of `logo.png`.
 
