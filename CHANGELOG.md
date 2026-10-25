@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 - 2026-10-25
+
+- Dark-theme brand images (`dark_icon`, `dark_logo`); `logo@2x.png` is now exactly twice
+  the size of `logo.png`.
+
 ## 0.1.0
 
 First public release.
