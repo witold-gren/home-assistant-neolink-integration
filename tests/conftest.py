@@ -73,10 +73,14 @@ class FakeBridge:
         self.cached: bytes | None = JPEG
         self.event: bytes | None = None
         self.sockets: list[web.WebSocketResponse] = []
+        # Talks through the speaker: the rate asked and the PCM frames received
+        self.talks: list[dict[str, Any]] = []
+        self.talk_error: str | None = None
         self.closing = False
         app = web.Application()
         app.router.add_get("/ws", self._ws)
         app.router.add_get("/snapshot/{name}", self._snapshot)
+        app.router.add_get("/talk/{name}", self._talk)
         self.server = TestServer(app)
 
     @property
@@ -118,6 +122,8 @@ class FakeBridge:
             cam[req["command"]] = args["on"]
         elif req["command"] == "push":
             cam["push_enabled"] = args["on"]
+        elif req["command"] == "record_live":
+            cam["record_live"] = args["on"]
         elif req["command"] == "pir_sensitivity":
             cam["pir_sensitivity"] = args["value"]
         elif req["command"] == "post_record":
@@ -128,6 +134,30 @@ class FakeBridge:
             return {"type": "result", "id": req["id"], "success": False, "error": "camera asleep"}
         await self.push(cam["name"])
         return {"type": "result", "id": req["id"], "success": True, "result": cam}
+
+    async def _talk(self, request: web.Request) -> web.StreamResponse:
+        if not self._authorized(request):
+            raise web.HTTPUnauthorized
+        ws = web.WebSocketResponse()
+        await ws.prepare(request)
+        talk: dict[str, Any] = {
+            "camera": request.match_info["name"],
+            "rate": request.query.get("rate"),
+            "frames": [],
+        }
+        self.talks.append(talk)
+        if self.talk_error:
+            await ws.send_json({"ok": False, "error": self.talk_error})
+            await ws.close()
+            return ws
+        async for msg in ws:
+            if msg.type is WSMsgType.BINARY:
+                talk["frames"].append(msg.data)
+            elif msg.type is WSMsgType.TEXT and msg.data == "stop":
+                break
+        await ws.send_json({"ok": True})
+        await ws.close()
+        return ws
 
     async def _snapshot(self, request: web.Request) -> web.StreamResponse:
         if not self._authorized(request):

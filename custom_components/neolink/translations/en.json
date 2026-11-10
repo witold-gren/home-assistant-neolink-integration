@@ -72,6 +72,9 @@
     "binary_sensor": {
       "link": {
         "name": "Camera link"
+      },
+      "recording_live": {
+        "name": "Recording live view"
       }
     },
     "switch": {
@@ -92,6 +95,9 @@
       },
       "push_enabled": {
         "name": "Push notifications"
+      },
+      "record_live": {
+        "name": "Record live"
       }
     },
     "select": {

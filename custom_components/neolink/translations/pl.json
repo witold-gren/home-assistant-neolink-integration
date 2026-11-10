@@ -72,6 +72,9 @@
     "binary_sensor": {
       "link": {
         "name": "Połączenie kamery"
+      },
+      "recording_live": {
+        "name": "Nagrywa podgląd"
       }
     },
     "switch": {
@@ -92,6 +95,9 @@
       },
       "push_enabled": {
         "name": "Powiadomienia push"
+      },
+      "record_live": {
+        "name": "Nagrywaj podgląd"
       }
     },
     "select": {

@@ -1,4 +1,4 @@
-"""Status LED, PIR sensor and detection settings (recording, alarm sound)."""
+"""Status LED, PIR sensor, detection settings (recording, alarm sound) and live-view recording."""
 
 from __future__ import annotations
 
@@ -36,7 +36,18 @@ SWITCHES: tuple[SwitchEntityDescription, ...] = (
     SwitchEntityDescription(
         key="push_enabled", translation_key="push_enabled", entity_category=EntityCategory.CONFIG
     ),
+    # Watched live views written to Home Assistant's media folder by the add-on (never wakes the
+    # camera). Only when the bridge records at all: it reports None without a record_dir.
+    SwitchEntityDescription(
+        key="record_live",
+        translation_key="record_live",
+        icon="mdi:record-rec",
+        entity_category=EntityCategory.CONFIG,
+    ),
 )
+
+# Where the add-on writes the recorded live views, relative to Home Assistant's media folder.
+RECORDINGS_PATH = "neolink/{camera}"
 
 # State key -> bridge command, where they differ.
 COMMANDS = {"push_enabled": "push"}
@@ -53,6 +64,7 @@ async def async_setup_entry(
         for name, state in client.cameras.items()
         for description in SWITCHES
         if description.key in state
+        and (description.key != "record_live" or state["record_live"] is not None)
     )
 
 
@@ -68,6 +80,13 @@ class NeolinkSwitch(NeolinkEntity, SwitchEntity):
     @property
     def is_on(self) -> bool | None:
         return self.state_data.get(self.entity_description.key)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, str] | None:
+        # A dashboard finds the recordings of this camera here (media folder, day folders inside).
+        if self.entity_description.key != "record_live":
+            return None
+        return {"recordings_path": RECORDINGS_PATH.format(camera=self._camera)}
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         key = self.entity_description.key

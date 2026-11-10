@@ -55,6 +55,14 @@ BINARY_SENSORS: tuple[NeolinkBinaryDescription, ...] = (
         # from listening while connected. Stays on for `motion_timeout` after each notification.
         supported=lambda s: bool(s.get("motion_enabled")),
     ),
+    # A live view is being written to a file right now (see the "Record live" switch).
+    NeolinkBinaryDescription(
+        key="recording_live",
+        translation_key="recording_live",
+        device_class=BinarySensorDeviceClass.RUNNING,
+        value=lambda s: bool(s.get("recording_live")),
+        supported=lambda s: s.get("record_live") is not None,
+    ),
 )
 
 

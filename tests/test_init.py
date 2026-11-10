@@ -267,3 +267,42 @@ async def test_storage_signal_push(
     await bridge.push("G330")
     await settle(hass)
     assert hass.states.get("sensor.g330_sd_card_used").state == "unknown"
+
+
+async def test_record_live(hass: HomeAssistant, bridge: FakeBridge, entry: MockConfigEntry) -> None:
+    bridge.cameras["G330"].update({"record_live": False, "recording_live": False})
+    await setup(hass, entry)
+    switch = hass.states.get("switch.g330_record_live")
+    assert switch.state == STATE_OFF
+    # A dashboard finds the recordings of the camera in Home Assistant's media folder.
+    assert switch.attributes["recordings_path"] == "neolink/G330"
+    assert hass.states.get("binary_sensor.g330_recording_live_view").state == STATE_OFF
+
+    await hass.services.async_call(
+        "switch", "turn_on", {"entity_id": "switch.g330_record_live"}, blocking=True
+    )
+    await settle(hass)
+    assert bridge.commands[-1] == {
+        "id": bridge.commands[-1]["id"],
+        "command": "record_live",
+        "camera": "G330",
+        "args": {"on": True},
+    }
+    assert hass.states.get("switch.g330_record_live").state == STATE_ON
+
+    # Someone watches: the add-on writes the live view to a file.
+    bridge.cameras["G330"]["recording_live"] = True
+    await bridge.push("G330")
+    await settle(hass)
+    assert hass.states.get("binary_sensor.g330_recording_live_view").state == STATE_ON
+
+
+@pytest.mark.parametrize("state", [{}, {"record_live": None, "recording_live": False}])
+async def test_no_record_live_without_recording_in_the_bridge(
+    hass: HomeAssistant, bridge: FakeBridge, entry: MockConfigEntry, state: dict
+) -> None:
+    # An older bridge reports no key; one without record_dir reports None.
+    bridge.cameras["G330"].update(state)
+    await setup(hass, entry)
+    assert hass.states.get("switch.g330_record_live") is None
+    assert hass.states.get("binary_sensor.g330_recording_live_view") is None

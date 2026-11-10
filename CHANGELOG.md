@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0 - 2026-11-10
+
+- **Record live** switch and **Recording live view** sensor (Neolink app 0.2.0 or newer): watched
+  live views are written to Home Assistant's media folder, `neolink/<camera>/<YYYY-MM-DD>/`. The
+  switch never wakes the camera; its `recordings_path` attribute tells a dashboard where the files
+  are.
+- Talking through the camera's speaker (Neolink app 0.2.0 or newer): `/api/neolink/talk/<camera>`
+  takes a browser microphone (WebSocket of PCM 16-bit mono, `?rate=<Hz>`, the text `stop` ends it,
+  the last message is `{"ok": true}` or `{"ok": false, "error": ...}`) and relays it to the app.
+  The camera's `talk_path` attribute tells a dashboard where to talk.
+
 ## 0.1.1 - 2026-10-25
 
 - Entity ids are English in every Home Assistant language (`sensor.<camera>_battery` instead of

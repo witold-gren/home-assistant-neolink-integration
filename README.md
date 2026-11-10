@@ -77,7 +77,7 @@ camera and the bridge report.
 
 | Entity | Type | Notes |
 |---|---|---|
-| Camera | camera | Live view from the bridge RTSP server; the still image comes from the bridge cache only. |
+| Camera | camera | Live view from the bridge RTSP server (with sound); the still image comes from the bridge cache only. Attribute `talk_path`: where a dashboard talks through the speaker. |
 | Last snapshot, Last event | image | From the bridge cache. *Last event* is the picture taken after a motion notification. |
 | Battery | sensor | Battery level in %. |
 | Battery temperature, Battery voltage | sensor | Diagnostic; voltage is disabled by default. |
@@ -89,6 +89,8 @@ camera and the bridge report.
 | Motion | binary sensor | From Reolink push notifications, also while the camera sleeps. |
 | Camera link, Charging | binary sensor | Diagnostic. |
 | Status LED, PIR sensor, Reduce false alarms, Recording, Alarm sound on detection, Push notifications | switch | Camera settings. |
+| Record live | switch | Writes every watched live view to the media folder (`neolink/<camera>/<day>/HHMMSS-HHMMSS.mp4`, Neolink app 0.2.0+); attribute `recordings_path`. Never wakes the camera. |
+| Recording live view | binary sensor | On while a live view is being written. |
 | Infrared | select | Night vision: auto, on or off. |
 | Post-detection recording | select | How long the camera keeps recording after a detection (for example 8 / 15 / 30 s). |
 | PIR sensitivity | number | 1-100, as in the Reolink app. |

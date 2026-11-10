@@ -79,7 +79,7 @@ które zgłaszają kamera i most.
 
 | Encja | Typ | Uwagi |
 |---|---|---|
-| Kamera | camera | Podgląd na żywo z serwera RTSP mostu; obraz statyczny pochodzi wyłącznie z pamięci podręcznej mostu. |
+| Kamera | camera | Podgląd na żywo z serwera RTSP mostu (z dźwiękiem); obraz statyczny pochodzi wyłącznie z pamięci podręcznej mostu. Atrybut `talk_path`: gdzie dashboard mówi przez głośnik kamery. |
 | Ostatnie zdjęcie, Ostatnie zdarzenie | image | Z pamięci podręcznej mostu. *Ostatnie zdarzenie* to zdjęcie zrobione po powiadomieniu o ruchu. |
 | Bateria | sensor | Poziom baterii w %. |
 | Temperatura baterii, Napięcie baterii | sensor | Diagnostyczne; napięcie jest domyślnie wyłączone. |
@@ -91,6 +91,8 @@ które zgłaszają kamera i most.
 | Ruch | binary sensor | Z powiadomień push Reolink, także gdy kamera śpi. |
 | Połączenie kamery, Ładowanie | binary sensor | Diagnostyczne. |
 | Dioda statusu, Czujnik PIR, Redukcja fałszywych alarmów, Nagrywanie, Dźwięk alarmu przy wykryciu, Powiadomienia push | switch | Ustawienia kamery. |
+| Nagrywaj podgląd | switch | Zapisuje każdy oglądany podgląd w folderze mediów (`neolink/<kamera>/<dzień>/GGMMSS-GGMMSS.mp4`, aplikacja Neolink 0.2.0+); atrybut `recordings_path`. Nie budzi kamery. |
+| Nagrywa podgląd | binary sensor | Włączony, gdy podgląd jest właśnie zapisywany. |
 | Podczerwień | select | Widzenie w nocy: auto, włączone lub wyłączone. |
 | Nagrywanie po wykryciu | select | Jak długo kamera nagrywa po wykryciu (na przykład 8 / 15 / 30 s). |
 | Czułość PIR | number | 1-100, jak w aplikacji Reolink. |

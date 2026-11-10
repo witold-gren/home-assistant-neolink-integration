@@ -24,6 +24,7 @@ from .const import (
     STREAM_TIMEOUT,
 )
 from .entity import NeolinkEntity
+from .talk import talk_path
 
 
 async def async_setup_entry(
@@ -53,6 +54,11 @@ class NeolinkCamera(NeolinkEntity, Camera):
             f"rtsp://{auth}{data[CONF_HOST]}:{data[CONF_RTSP_PORT]}/{camera}/sub"
             f"#timeout={STREAM_TIMEOUT}"
         )
+
+    @property
+    def extra_state_attributes(self) -> dict[str, str]:
+        # Where a dashboard talks through the camera's speaker (see talk.py)
+        return {"talk_path": talk_path(self._camera)}
 
     async def stream_source(self) -> str:
         # Connecting to this URL wakes the camera; the bridge disconnects it when idle.

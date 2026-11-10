@@ -62,6 +62,15 @@ class NeolinkClient:
         for listener in list(self._listeners):
             listener()
 
+    async def talk(self, camera: str, rate: int) -> aiohttp.ClientWebSocketResponse:
+        """Open the bridge's talk WebSocket for `camera` (PCM s16le mono at `rate` Hz)."""
+        return await self._session.ws_connect(
+            f"{self._base}/talk/{camera}",
+            params={"rate": str(rate)},
+            headers=self._headers,
+            heartbeat=30,
+        )
+
     async def connect(self) -> None:
         """First connection: wait for `hello` and raise errors (config flow, entry setup)."""
         await self._open()

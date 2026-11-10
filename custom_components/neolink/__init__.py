@@ -11,6 +11,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import NeolinkAuthError, NeolinkClient, NeolinkError
+from .talk import async_register_talk
 
 PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
@@ -60,6 +61,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: NeolinkConfigEntry) -> b
             hass.config_entries.async_schedule_reload(entry.entry_id)
 
     entry.async_on_unload(client.add_listener(_check_cameras))
+    async_register_talk(hass)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
