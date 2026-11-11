@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.0 - 2026-11-11
+
+- **Siren** entity (Neolink app 0.3.0 or newer): on until switched off or for a duration (30 s by
+  default, at most 15 minutes); the app switches it off by itself. The **Siren** button still
+  sounds it once.
+- Recordings on the SD card copied to Home Assistant (Neolink app 0.3.0 or newer): the **Sync
+  recordings** button copies what the media folder lacks from the last 7 days, the
+  `neolink.sync_recordings` action takes `hours` and `latest` (only the newest one, e.g. after a
+  motion alert). The **Recordings sync** sensor shows idle / copying / failed with the counts and
+  the last file. The files land next to the recorded live views, `neolink/<camera>/<YYYY-MM-DD>/`.
+- For dashboards: the camera's `sd_recordings` attribute names the WebSocket commands
+  `neolink/sd_recordings` (the card's list with signed cover thumbnails, `refresh` searches the card
+  again) and `neolink/sd_download` (copies chosen recordings); thumbnails at
+  `/api/neolink/sd_thumbnail/<camera>/<day>/<file>.jpg`. Nothing on the card is ever deleted.
+- **Auto-copy recordings** switch per camera: the newest SD card recording is copied 5 minutes
+  after each motion alert (off by default).
+- Talking passes on the app's `{"state": "connecting"}` and `{"state": "connected"}` as they come;
+  only the message with `ok` ends the talk (Neolink app 0.2.1 or newer sends the states).
+
 ## 0.2.0 - 2026-11-10
 
 - **Record live** switch and **Recording live view** sensor (Neolink app 0.2.0 or newer): watched

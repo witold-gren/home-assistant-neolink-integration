@@ -1,4 +1,4 @@
-"""Battery, SD card and 4G signal sensors, plus last motion and last snapshot times."""
+"""Battery, SD card and 4G signal sensors, last motion and snapshot times, the SD card copy."""
 
 from __future__ import annotations
 
@@ -34,6 +34,7 @@ class NeolinkSensorDescription(SensorEntityDescription):
 
     value: Callable[[dict[str, Any]], Any]
     supported: Callable[[dict[str, Any]], bool] = lambda _: True
+    attributes: Callable[[dict[str, Any]], dict[str, Any]] | None = None
 
 
 def _battery(key: str, scale: float | None = None) -> Callable[[dict[str, Any]], Any]:
@@ -81,6 +82,30 @@ DETECTIONS = ("person", "vehicle", "animal", "motion", "other")
 def _detection(state: dict[str, Any]) -> str | None:
     kind = state.get("last_detection")
     return None if kind is None else kind if kind in DETECTIONS else "other"
+
+
+# How the copy of the SD card recordings goes.
+SD_SYNC_STATES = ("idle", "syncing", "failed")
+
+
+def _sd_sync(state: dict[str, Any]) -> str:
+    sync = state.get("sd_sync") or {}
+    if sync.get("running"):
+        return "syncing"
+    return "failed" if sync.get("error") else "idle"
+
+
+def _sd_sync_attributes(state: dict[str, Any]) -> dict[str, Any]:
+    sync = state.get("sd_sync") or {}
+    finished = sync.get("finished")
+    return {
+        "total": sync.get("total", 0),
+        "copied": sync.get("done", 0),
+        "failed": sync.get("failed", 0),
+        "last_file": sync.get("last_file"),
+        "finished": datetime.fromtimestamp(finished, UTC).isoformat() if finished else None,
+        "error": sync.get("error"),
+    }
 
 
 SENSORS: tuple[NeolinkSensorDescription, ...] = (
@@ -191,6 +216,17 @@ SENSORS: tuple[NeolinkSensorDescription, ...] = (
         entity_category=EntityCategory.DIAGNOSTIC,
         value=_timestamp("snapshot_at"),
     ),
+    # The copy of the SD card recordings: what it does now; counts and the last file as attributes.
+    NeolinkSensorDescription(
+        key="sd_sync",
+        translation_key="sd_sync",
+        device_class=SensorDeviceClass.ENUM,
+        options=list(SD_SYNC_STATES),
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=_sd_sync,
+        attributes=_sd_sync_attributes,
+        supported=lambda s: "sd_sync" in s,
+    ),
 )
 
 
@@ -222,3 +258,8 @@ class NeolinkSensor(NeolinkEntity, SensorEntity):
     @property
     def native_value(self) -> Any:
         return self.entity_description.value(self.state_data)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        attributes = self.entity_description.attributes
+        return None if attributes is None else attributes(self.state_data)

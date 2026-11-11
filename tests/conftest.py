@@ -77,10 +77,14 @@ class FakeBridge:
         self.talks: list[dict[str, Any]] = []
         self.talk_error: str | None = None
         self.closing = False
+        # The SD card list the bridge keeps, and the covers it has
+        self.sd_list: dict[str, Any] = {"updated": None, "refreshing": False, "recordings": []}
+        self.sd_thumbnails: dict[str, bytes] = {}
         app = web.Application()
         app.router.add_get("/ws", self._ws)
         app.router.add_get("/snapshot/{name}", self._snapshot)
         app.router.add_get("/talk/{name}", self._talk)
+        app.router.add_get("/sd_thumbnail/{name}/{day}/{file}", self._sd_thumbnail)
         self.server = TestServer(app)
 
     @property
@@ -124,6 +128,8 @@ class FakeBridge:
             cam["push_enabled"] = args["on"]
         elif req["command"] == "record_live":
             cam["record_live"] = args["on"]
+        elif req["command"] == "sd_auto":
+            cam["sd_auto"] = args["on"]
         elif req["command"] == "pir_sensitivity":
             cam["pir_sensitivity"] = args["value"]
         elif req["command"] == "post_record":
@@ -132,6 +138,12 @@ class FakeBridge:
             cam["ir"] = args["state"]
         elif req["command"] == "siren" and cam.get("fail"):
             return {"type": "result", "id": req["id"], "success": False, "error": "camera asleep"}
+        elif req["command"] == "siren" and "on" in args:
+            cam["siren_on"] = args["on"]
+        elif req["command"] == "sd_sync":
+            cam["sd_sync"] = {"running": True, "total": 0, "done": 0, "failed": 0}
+        elif req["command"] == "sd_recordings":
+            return {"type": "result", "id": req["id"], "success": True, "result": self.sd_list}
         await self.push(cam["name"])
         return {"type": "result", "id": req["id"], "success": True, "result": cam}
 
@@ -146,10 +158,12 @@ class FakeBridge:
             "frames": [],
         }
         self.talks.append(talk)
+        await ws.send_json({"state": "connecting"})
         if self.talk_error:
             await ws.send_json({"ok": False, "error": self.talk_error})
             await ws.close()
             return ws
+        await ws.send_json({"state": "connected"})
         async for msg in ws:
             if msg.type is WSMsgType.BINARY:
                 talk["frames"].append(msg.data)
@@ -158,6 +172,14 @@ class FakeBridge:
         await ws.send_json({"ok": True})
         await ws.close()
         return ws
+
+    async def _sd_thumbnail(self, request: web.Request) -> web.StreamResponse:
+        if not self._authorized(request):
+            raise web.HTTPUnauthorized
+        key = f"{request.match_info['day']}/{request.match_info['file']}"
+        if key not in self.sd_thumbnails:
+            raise web.HTTPNotFound(text="no thumbnail")
+        return web.Response(body=self.sd_thumbnails[key], content_type="image/jpeg")
 
     async def _snapshot(self, request: web.Request) -> web.StreamResponse:
         if not self._authorized(request):

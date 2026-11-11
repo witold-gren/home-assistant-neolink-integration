@@ -19,3 +19,9 @@ COMMAND_TIMEOUT: Final = 100
 # Seconds go2rtc waits for the first RTSP response from a waking camera.
 STREAM_TIMEOUT: Final = 60
 RECONNECT_DELAYS: Final = (1, 2, 5, 10, 30)
+
+# How far back the "Sync recordings" button looks on the SD card (every recording costs mobile
+# data on a 4G camera); the neolink.sync_recordings action takes its own range.
+SYNC_HOURS: Final = 7 * 24
+# How long the siren entity sounds when no duration is given.
+SIREN_SECONDS: Final = 30

@@ -93,10 +93,48 @@ które zgłaszają kamera i most.
 | Dioda statusu, Czujnik PIR, Redukcja fałszywych alarmów, Nagrywanie, Dźwięk alarmu przy wykryciu, Powiadomienia push | switch | Ustawienia kamery. |
 | Nagrywaj podgląd | switch | Zapisuje każdy oglądany podgląd w folderze mediów (`neolink/<kamera>/<dzień>/GGMMSS-GGMMSS.mp4`, aplikacja Neolink 0.2.0+); atrybut `recordings_path`. Nie budzi kamery. |
 | Nagrywa podgląd | binary sensor | Włączony, gdy podgląd jest właśnie zapisywany. |
+| Automatycznie kopiuj nagrania | switch | Kopiuje najnowsze nagranie z karty SD do folderu mediów 5 minut po każdym powiadomieniu o ruchu (aplikacja Neolink 0.3.0+, domyślnie wyłączony). Nagrania z karty można i tak przeglądać i kopiować ręcznie. |
 | Podczerwień | select | Widzenie w nocy: auto, włączone lub wyłączone. |
 | Nagrywanie po wykryciu | select | Jak długo kamera nagrywa po wykryciu (na przykład 8 / 15 / 30 s). |
 | Czułość PIR | number | 1-100, jak w aplikacji Reolink. |
-| Uruchom ponownie, Syrena, Odśwież stan, Zrób zdjęcie | button | Jednorazowe polecenia. |
+| Syrena | siren | Włączona do wyłączenia lub na podany czas (domyślnie 30 s); aplikacja Neolink 0.3.0+. |
+| Synchronizacja nagrań | sensor | Kopiowanie z karty SD: bezczynna, kopiowanie lub błąd; atrybuty z licznikami, ostatnim plikiem i błędem (diagnostyczny). |
+| Uruchom ponownie, Syrena, Odśwież stan, Zrób zdjęcie | button | Jednorazowe polecenia (Syrena wyje raz). |
+| Synchronizuj nagrania | button | Kopiuje z karty SD nagrania z ostatnich 7 dni, których brakuje w folderze mediów (aplikacja Neolink 0.3.0+). |
+
+## Nagrania z karty SD
+
+Z aplikacją Neolink 0.3.0 lub nowszą nagrania, które kamera zapisuje na karcie SD, można skopiować
+do folderu mediów Home Assistant, obok nagranych podglądów (`neolink/<kamera>/<RRRR-MM-DD>/`, z nazwą
+od początku i końca zdarzenia według kamery). **Synchronizuj nagrania** kopiuje to, czego brakuje
+z ostatnich 7 dni; akcja `neolink.sync_recordings` przyjmuje własny zakres. Na kamerze 4G każde
+kopiowanie zużywa dane komórkowe (około 13 MB na 30 s głównego strumienia; opcja aplikacji
+`sd_stream: sub` kopiuje mały strumień).
+
+Dla dashboardów encja kamery ma atrybut `sd_recordings` z nazwami dwóch poleceń WebSocket:
+`neolink/sd_recordings` (`entity_id`, `refresh`, `thumbnails`) zwraca listę z karty z podpisanymi
+miniaturami i informacją, co już jest lokalnie, a `neolink/sd_download` (`entity_id`, `files`)
+kopiuje wybrane nagrania. Home Dashboard pokazuje je w oknie kamery. Z karty nic nie jest kasowane.
+
+Najnowsze nagranie kilka minut po wykryciu ruchu:
+
+```yaml
+automation:
+  - alias: Skopiuj nagranie kamery po ruchu
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.<camera>_motion
+        to: "on"
+    actions:
+      - delay: "00:05:00"
+      - action: neolink.sync_recordings
+        target:
+          entity_id: camera.<camera>
+        data:
+          hours: 1
+          latest: true
+```
 
 ## Kamery bateryjne
 

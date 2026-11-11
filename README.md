@@ -91,10 +91,48 @@ camera and the bridge report.
 | Status LED, PIR sensor, Reduce false alarms, Recording, Alarm sound on detection, Push notifications | switch | Camera settings. |
 | Record live | switch | Writes every watched live view to the media folder (`neolink/<camera>/<day>/HHMMSS-HHMMSS.mp4`, Neolink app 0.2.0+); attribute `recordings_path`. Never wakes the camera. |
 | Recording live view | binary sensor | On while a live view is being written. |
+| Auto-copy recordings | switch | Copies the newest SD card recording to the media folder 5 minutes after each motion alert (Neolink app 0.3.0+, off by default). The card's recordings can be browsed and copied by hand either way. |
 | Infrared | select | Night vision: auto, on or off. |
 | Post-detection recording | select | How long the camera keeps recording after a detection (for example 8 / 15 / 30 s). |
 | PIR sensitivity | number | 1-100, as in the Reolink app. |
-| Restart, Siren, Refresh state, Take snapshot | button | One-shot commands. |
+| Siren | siren | On until switched off or for a duration (30 s by default); Neolink app 0.3.0+. |
+| Recordings sync | sensor | Copying the SD card: idle, copying or failed; attributes with the counts, the last file and the error (diagnostic). |
+| Restart, Siren, Refresh state, Take snapshot | button | One-shot commands (Siren sounds once). |
+| Sync recordings | button | Copies the SD card recordings of the last 7 days that the media folder lacks (Neolink app 0.3.0+). |
+
+## SD card recordings
+
+With the Neolink app 0.3.0 or newer the recordings the camera saves on its SD card can be copied
+to Home Assistant's media folder, next to the recorded live views (`neolink/<camera>/<YYYY-MM-DD>/`,
+named by the camera's start and end of the event). **Sync recordings** copies what is missing from
+the last 7 days; the `neolink.sync_recordings` action takes its own range. Every copy costs mobile
+data on a 4G camera (about 13 MB per 30 s of the main stream; the app option `sd_stream: sub` copies
+the small stream instead).
+
+For dashboards the camera entity has the attribute `sd_recordings` naming two WebSocket commands:
+`neolink/sd_recordings` (`entity_id`, `refresh`, `thumbnails`) gives the card's list with signed
+cover thumbnails and what is already local, `neolink/sd_download` (`entity_id`, `files`) copies
+chosen recordings. Home Dashboard shows them in the camera window. Nothing on the card is deleted.
+
+The newest recording a few minutes after motion:
+
+```yaml
+automation:
+  - alias: Copy the camera's recording after motion
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.<camera>_motion
+        to: "on"
+    actions:
+      - delay: "00:05:00"
+      - action: neolink.sync_recordings
+        target:
+          entity_id: camera.<camera>
+        data:
+          hours: 1
+          latest: true
+```
 
 ## Battery cameras
 

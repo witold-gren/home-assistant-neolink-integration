@@ -1,0 +1,17 @@
+sync_recordings:
+  target:
+    entity:
+      integration: neolink
+      domain: camera
+  fields:
+    hours:
+      default: 168
+      selector:
+        number:
+          min: 1
+          max: 744
+          unit_of_measurement: h
+    latest:
+      default: false
+      selector:
+        boolean:

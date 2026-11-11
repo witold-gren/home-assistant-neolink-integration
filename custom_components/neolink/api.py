@@ -185,6 +185,21 @@ class NeolinkClient:
         except (aiohttp.ClientError, TimeoutError) as err:
             raise NeolinkError(f"snapshot failed: {err}") from err
 
+    async def sd_thumbnail(self, camera: str, day: str, file: str) -> bytes | None:
+        """Cover thumbnail of a recording on the SD card (kept by the bridge); None if none yet."""
+        try:
+            async with asyncio.timeout(COMMAND_TIMEOUT):
+                resp = await self._session.get(
+                    f"{self._base}/sd_thumbnail/{camera}/{day}/{file}", headers=self._headers
+                )
+                if resp.status == 404:
+                    return None
+                if resp.status != 200:
+                    raise NeolinkError(f"sd_thumbnail: HTTP {resp.status} {await resp.text()}")
+                return await resp.read()
+        except (aiohttp.ClientError, TimeoutError) as err:
+            raise NeolinkError(f"sd_thumbnail failed: {err}") from err
+
     async def close(self) -> None:
         """Close the connection and stop reconnecting."""
         self._stopping = True

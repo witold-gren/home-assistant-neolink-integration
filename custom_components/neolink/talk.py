@@ -3,7 +3,8 @@
 The browser sends its microphone as raw 16-bit PCM over a WebSocket to Home Assistant, which needs
 the user's login (the page asks for a signed path, so the socket carries no header). Home
 Assistant relays the frames to the bridge's `/talk/<camera>`, which encodes them for the camera.
-The text "stop", or closing the socket, ends the talk; the last message is the outcome,
+On the way the bridge reports `{"state": "connecting"}` and `{"state": "connected"}`, passed on as
+they come. The text "stop", or closing the socket, ends the talk; the last message is the outcome,
 `{"ok": true}` or `{"ok": false, "error": "busy" | "no_speaker" | "unreachable" | "failed"}`.
 """
 
@@ -55,6 +56,15 @@ def answer(text: str) -> dict[str, Any]:
     return outcome if isinstance(outcome, dict) and "ok" in outcome else failed
 
 
+def is_state(text: str) -> bool:
+    """A message on the way (`{"state": ...}` without `ok`), not the outcome."""
+    try:
+        message = json.loads(text)
+    except ValueError:
+        return False
+    return isinstance(message, dict) and "state" in message and "ok" not in message
+
+
 async def relay_talk(
     browser: web.WebSocketResponse, bridge: aiohttp.ClientWebSocketResponse
 ) -> dict[str, Any]:
@@ -62,8 +72,14 @@ async def relay_talk(
 
     async def from_bridge() -> dict[str, Any]:
         async for message in bridge:
-            if message.type == WSMsgType.TEXT:
-                return answer(message.data)
+            if message.type != WSMsgType.TEXT:
+                continue
+            if is_state(message.data):
+                # The camera is waking or answered: the page shows it, the talk goes on
+                if not browser.closed:
+                    await browser.send_str(message.data)
+                continue
+            return answer(message.data)
         return {"ok": False, "error": "unreachable"}
 
     outcome = asyncio.ensure_future(from_bridge())

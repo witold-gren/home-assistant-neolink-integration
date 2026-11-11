@@ -7,6 +7,7 @@ takes a fresh one on demand.
 
 from __future__ import annotations
 
+from typing import Any
 from urllib.parse import quote
 
 from homeassistant.components.camera import Camera, CameraEntityFeature
@@ -24,6 +25,7 @@ from .const import (
     STREAM_TIMEOUT,
 )
 from .entity import NeolinkEntity
+from .sd_card import sd_recordings_attribute
 from .talk import talk_path
 
 
@@ -56,13 +58,22 @@ class NeolinkCamera(NeolinkEntity, Camera):
         )
 
     @property
-    def extra_state_attributes(self) -> dict[str, str]:
-        # Where a dashboard talks through the camera's speaker (see talk.py)
-        return {"talk_path": talk_path(self._camera)}
+    def extra_state_attributes(self) -> dict[str, Any]:
+        # Where a dashboard talks through the camera's speaker (see talk.py) and finds the
+        # recordings on its SD card (see sd_card.py; bridge 0.3.0 and later)
+        attributes: dict[str, Any] = {"talk_path": talk_path(self._camera)}
+        if "sd_sync" in self.state_data:
+            attributes["sd_recordings"] = sd_recordings_attribute()
+        return attributes
 
     async def stream_source(self) -> str:
         # Connecting to this URL wakes the camera; the bridge disconnects it when idle.
         return self._source
+
+    async def async_sync_recordings(self, hours: int, latest: bool) -> None:
+        """Copy the SD card recordings of the last `hours` that Home Assistant lacks (see
+        `neolink.sync_recordings`); the bridge works in the background."""
+        await self._command("sd_sync", hours=hours, latest=latest)
 
     async def async_camera_image(
         self, width: int | None = None, height: int | None = None

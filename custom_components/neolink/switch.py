@@ -1,4 +1,5 @@
-"""Status LED, PIR sensor, detection settings (recording, alarm sound) and live-view recording."""
+"""Status LED, PIR sensor, detection settings, live-view recording and the automatic copy of the
+SD card recordings."""
 
 from __future__ import annotations
 
@@ -44,7 +45,19 @@ SWITCHES: tuple[SwitchEntityDescription, ...] = (
         icon="mdi:record-rec",
         entity_category=EntityCategory.CONFIG,
     ),
+    # The newest SD card recording copied to the media folder 5 minutes after each motion alert
+    # (bridge 0.3.0 and later; None without a recording folder). Browsing and copying by hand work
+    # either way.
+    SwitchEntityDescription(
+        key="sd_auto",
+        translation_key="sd_auto",
+        icon="mdi:sd",
+        entity_category=EntityCategory.CONFIG,
+    ),
 )
+
+# Switches the bridge reports as None when it has no recording folder.
+NEEDS_FOLDER = ("record_live", "sd_auto")
 
 # Where the add-on writes the recorded live views, relative to Home Assistant's media folder.
 RECORDINGS_PATH = "neolink/{camera}"
@@ -64,7 +77,7 @@ async def async_setup_entry(
         for name, state in client.cameras.items()
         for description in SWITCHES
         if description.key in state
-        and (description.key != "record_live" or state["record_live"] is not None)
+        and (description.key not in NEEDS_FOLDER or state[description.key] is not None)
     )
 
 

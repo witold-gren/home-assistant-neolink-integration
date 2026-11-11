@@ -67,6 +67,34 @@
           "motion": "Motion",
           "other": "Other"
         }
+      },
+      "sd_sync": {
+        "name": "Recordings sync",
+        "state": {
+          "idle": "Idle",
+          "syncing": "Copying",
+          "failed": "Failed"
+        },
+        "state_attributes": {
+          "total": {
+            "name": "To copy"
+          },
+          "copied": {
+            "name": "Copied"
+          },
+          "failed": {
+            "name": "Failed"
+          },
+          "last_file": {
+            "name": "Last file"
+          },
+          "finished": {
+            "name": "Finished"
+          },
+          "error": {
+            "name": "Error"
+          }
+        }
       }
     },
     "binary_sensor": {
@@ -98,6 +126,9 @@
       },
       "record_live": {
         "name": "Record live"
+      },
+      "sd_auto": {
+        "name": "Auto-copy recordings"
       }
     },
     "select": {
@@ -122,6 +153,9 @@
       },
       "snapshot": {
         "name": "Take snapshot"
+      },
+      "sd_sync": {
+        "name": "Sync recordings"
       }
     },
     "number": {
@@ -135,6 +169,27 @@
       },
       "last_event": {
         "name": "Last event"
+      }
+    },
+    "siren": {
+      "siren": {
+        "name": "Siren"
+      }
+    }
+  },
+  "services": {
+    "sync_recordings": {
+      "name": "Sync recordings",
+      "description": "Copies the recordings of the camera's SD card that Home Assistant does not have yet to the media folder (neolink/<camera>). Every recording costs mobile data on a 4G camera.",
+      "fields": {
+        "hours": {
+          "name": "Hours",
+          "description": "How far back to look on the SD card."
+        },
+        "latest": {
+          "name": "Only the newest",
+          "description": "Copy only the newest recording, e.g. a few minutes after a motion alert."
+        }
       }
     }
   }
