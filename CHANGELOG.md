@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1 - 2026-11-12
+
+- The SD card list tells dashboards why the last copy of a recording failed (`copy_error`,
+  Neolink app 0.3.1 or newer).
+
 ## 0.3.0 - 2026-11-11
 
 - **Siren** entity (Neolink app 0.3.0 or newer): on until switched off or for a duration (30 s by

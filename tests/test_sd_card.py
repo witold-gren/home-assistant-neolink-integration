@@ -20,6 +20,7 @@ RECORDINGS = [
         "local": False,
         "downloading": False,
         "thumbnail": True,
+        "copy_error": "Simultaneous subscription, Some(0)",
     },
     {
         "file": "2026-11-10/132042-132112.mp4",
@@ -82,6 +83,9 @@ async def test_the_list_has_signed_thumbnails(
     )
     assert second["thumbnail"] is None
     assert (second["local"], second["start"]) == (True, "2026-11-10T13:20:42")
+    # Why a copy failed reaches the dashboard; none when the bridge says nothing
+    assert first["copy_error"] == "Simultaneous subscription, Some(0)"
+    assert second["copy_error"] is None
     assert bridge.commands[-1]["args"] == {
         "refresh": True,
         "thumbnails": ["2026-10-15/122559-122609.mp4"],

@@ -78,6 +78,8 @@ def listing(
                 "size": r.get("size"),
                 "local": bool(r.get("local")),
                 "downloading": bool(r.get("downloading")),
+                # Why the last copy of this file failed (bridge 0.3.1 and later), else None
+                "copy_error": r.get("copy_error"),
                 "thumbnail": async_sign_path(
                     hass,
                     thumbnail_path(camera, r["file"]),
