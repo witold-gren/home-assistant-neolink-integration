@@ -68,6 +68,15 @@ encji pozostaną bez zmian.
 | Port RTSP | Port serwera RTSP mostu (domyślnie `8554`). |
 | Nazwa użytkownika / hasło RTSP | Dane logowania RTSP, jeśli most ich wymaga. |
 
+### Opcje
+
+**Konfiguruj** przy integracji wybiera, jak podgląd na żywo trafia do przeglądarki:
+
+| Podgląd na żywo | Co się dzieje |
+|---|---|
+| **Tylko WebRTC** (domyślnie) | Jeden strumień kamery na podgląd, przez go2rtc (wbudowany w Home Assistant). Startuje najszybciej, a dźwięk nie odstaje od obrazu. |
+| **HLS i WebRTC** | Domyślne zachowanie Home Assistanta: frontend uruchamia obok WebRTC odtwarzacz HLS i trzyma go w tle, czyli drugi strumień kamery przez łącze komórkowe. Wybierz to tylko wtedy, gdy WebRTC u Ciebie nie działa (np. go2rtc jest wyłączony). |
+
 ## Encje
 
 Identyfikatory encji są angielskie w każdym języku Home Assistant (np. `sensor.<camera>_battery`
@@ -152,8 +161,9 @@ zaprojektowana z myślą o tym:
 - **Ruch bez budzenia:** ruch pochodzi z powiadomień push Reolink, więc działa, gdy kamera śpi.
   Powiadomienia push muszą być włączone w kamerze (przełącznik *Powiadomienia push*) i w aplikacji
   Neolink.
-- Wybudzenie kamery 4G przez serwery Reolink może trwać 10-20 sekund, więc podgląd na żywo
-  i polecenia mogą potrzebować chwili.
+- Wybudzenie kamery 4G przez serwery Reolink trwa kilka sekund: z aplikacją Neolink 0.4.0
+  i podglądem **Tylko WebRTC** obraz pojawia się po około 5 sekundach; polecenia mogą potrzebować
+  chwili.
 
 Encje pozostają dostępne, gdy kamera śpi; stają się niedostępne tylko wtedy, gdy sam most jest
 nieosiągalny.

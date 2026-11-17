@@ -20,6 +20,15 @@ COMMAND_TIMEOUT: Final = 100
 STREAM_TIMEOUT: Final = 60
 RECONNECT_DELAYS: Final = (1, 2, 5, 10, 30)
 
+# How the live view reaches the browser (entry option). "webrtc": WebRTC only, through go2rtc, so a
+# live view opens one camera stream. "auto": Home Assistant's default, the frontend starts HLS and
+# WebRTC together (two camera streams sharing a 4G camera's link until one is dropped).
+CONF_STREAM_MODE: Final = "stream_mode"
+STREAM_MODE_WEBRTC: Final = "webrtc"
+STREAM_MODE_AUTO: Final = "auto"
+STREAM_MODES: Final = (STREAM_MODE_WEBRTC, STREAM_MODE_AUTO)
+DEFAULT_STREAM_MODE: Final = STREAM_MODE_WEBRTC
+
 # How far back the "Sync recordings" button looks on the SD card (every recording costs mobile
 # data on a 4G camera); the neolink.sync_recordings action takes its own range.
 SYNC_HOURS: Final = 7 * 24

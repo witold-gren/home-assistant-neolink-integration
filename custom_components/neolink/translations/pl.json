@@ -192,5 +192,27 @@
         }
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Podgląd na żywo",
+        "description": "Jak podgląd na żywo trafia do przeglądarki.",
+        "data": {
+          "stream_mode": "Podgląd na żywo"
+        },
+        "data_description": {
+          "stream_mode": "Tylko WebRTC otwiera jeden strumień kamery na podgląd i startuje najszybciej. Domyślne ustawienie Home Assistanta uruchamia obok WebRTC także strumień HLS, czyli drugi strumień przez łącze komórkowe kamery."
+        }
+      }
+    }
+  },
+  "selector": {
+    "stream_mode": {
+      "options": {
+        "webrtc": "Tylko WebRTC (zalecane dla kamer na baterii i 4G)",
+        "auto": "HLS i WebRTC (domyślne w Home Assistant)"
+      }
+    }
   }
 }

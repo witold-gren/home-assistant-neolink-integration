@@ -4,9 +4,21 @@ from __future__ import annotations
 
 from typing import Any
 
-from homeassistant.config_entries import SOURCE_HASSIO, ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    SOURCE_HASSIO,
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlowWithReload,
+)
 from homeassistant.const import CONF_HOST, CONF_PORT, CONF_TOKEN
+from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.selector import (
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 from homeassistant.helpers.service_info.hassio import HassioServiceInfo
 import voluptuous as vol
 
@@ -15,9 +27,12 @@ from .const import (
     CONF_RTSP_PASSWORD,
     CONF_RTSP_PORT,
     CONF_RTSP_USERNAME,
+    CONF_STREAM_MODE,
     DEFAULT_PORT,
     DEFAULT_RTSP_PORT,
+    DEFAULT_STREAM_MODE,
     DOMAIN,
+    STREAM_MODES,
 )
 
 USER_SCHEMA = vol.Schema(
@@ -39,6 +54,11 @@ class NeolinkConfigFlow(ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         self._discovered: dict[str, Any] = {}
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> NeolinkOptionsFlow:
+        return NeolinkOptionsFlow()
 
     async def _validate(self, data: dict[str, Any]) -> str | None:
         client = NeolinkClient(
@@ -112,3 +132,26 @@ class NeolinkConfigFlow(ConfigFlow, domain=DOMAIN):
             description_placeholders={"host": self._discovered[CONF_HOST]},
             errors=errors,
         )
+
+
+class NeolinkOptionsFlow(OptionsFlowWithReload):
+    """How the live view reaches the browser; the entry reloads with the new camera entities."""
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        if user_input is not None:
+            return self.async_create_entry(data=user_input)
+        schema = vol.Schema(
+            {
+                vol.Required(
+                    CONF_STREAM_MODE,
+                    default=self.config_entry.options.get(CONF_STREAM_MODE, DEFAULT_STREAM_MODE),
+                ): SelectSelector(
+                    SelectSelectorConfig(
+                        options=list(STREAM_MODES),
+                        translation_key=CONF_STREAM_MODE,
+                        mode=SelectSelectorMode.LIST,
+                    )
+                ),
+            }
+        )
+        return self.async_show_form(step_id="init", data_schema=schema)

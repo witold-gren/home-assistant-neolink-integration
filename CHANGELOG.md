@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 - 2026-11-17
+
+- **Live view option** (Configure on the integration): **WebRTC only** (the new default) or
+  **HLS and WebRTC** (Home Assistant's default until now). For a camera that offers both, the
+  frontend starts an HLS and a WebRTC player at once and keeps HLS running in the background, so
+  every live view opened two streams of the camera over a 4G camera's mobile link (slower start,
+  choppy sound). With WebRTC only, a live view opens one camera stream through go2rtc.
+- Together with the Neolink app 0.4.0, which answers a player at once while the camera wakes, the
+  live view of a sleeping 4G camera opens in about 5 seconds instead of about 40.
+
 ## 0.3.1 - 2026-11-12
 
 - The SD card list tells dashboards why the last copy of a recording failed (`copy_error`,

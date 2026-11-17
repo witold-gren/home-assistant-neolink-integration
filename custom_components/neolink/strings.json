@@ -192,5 +192,27 @@
         }
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Live view",
+        "description": "How the live view reaches the browser.",
+        "data": {
+          "stream_mode": "Live view"
+        },
+        "data_description": {
+          "stream_mode": "WebRTC only opens one camera stream per live view and starts fastest. Home Assistant's default also starts an HLS stream next to WebRTC, which is a second stream over the camera's mobile link."
+        }
+      }
+    }
+  },
+  "selector": {
+    "stream_mode": {
+      "options": {
+        "webrtc": "WebRTC only (recommended for battery and 4G cameras)",
+        "auto": "HLS and WebRTC (Home Assistant's default)"
+      }
+    }
   }
 }

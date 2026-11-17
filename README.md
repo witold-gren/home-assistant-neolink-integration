@@ -67,6 +67,15 @@ installation takes over the existing entry, so your devices and entity ids stay 
 | RTSP port | Port of the bridge RTSP server (default `8554`). |
 | RTSP username / password | RTSP credentials, if the bridge requires them. |
 
+### Options
+
+**Configure** on the integration chooses how the live view reaches the browser:
+
+| Live view | What happens |
+|---|---|
+| **WebRTC only** (default) | One camera stream per live view, through go2rtc (built into Home Assistant). Starts fastest and keeps the sound in time. |
+| **HLS and WebRTC** | Home Assistant's default: the frontend starts an HLS player next to WebRTC and keeps it running, a second stream of the camera over its mobile link. Choose it only if WebRTC does not work for you (for example go2rtc is disabled). |
+
 ## Entities
 
 Entity IDs are English in every Home Assistant language (e.g. `sensor.<camera>_battery` also in
@@ -149,8 +158,9 @@ is designed around that:
 - **Motion without waking:** motion comes from Reolink push notifications, so it works while the
   camera sleeps. Push notifications must be enabled on the camera (*Push notifications* switch)
   and in the Neolink app.
-- Waking a 4G camera through the Reolink servers can take 10-20 seconds, so the live view and
-  commands may need a moment.
+- Waking a 4G camera through the Reolink servers takes a few seconds: with the Neolink app 0.4.0
+  and the **WebRTC only** live view the picture comes after about 5 seconds; commands may need a
+  moment.
 
 Entities stay available while the camera sleeps; they become unavailable only when the bridge
 itself is unreachable.
