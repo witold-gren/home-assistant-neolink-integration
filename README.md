@@ -76,6 +76,16 @@ installation takes over the existing entry, so your devices and entity ids stay 
 | **WebRTC only** (default) | One camera stream per live view, through go2rtc (built into Home Assistant). Starts fastest and keeps the sound in time. |
 | **HLS and WebRTC** | Home Assistant's default: the frontend starts an HLS player next to WebRTC and keeps it running, a second stream of the camera over its mobile link. Choose it only if WebRTC does not work for you (for example go2rtc is disabled). |
 
+## Screenshots
+
+The app's configuration (the camera UID is masked) and the device of a Reolink Go Plus / G330 (4G)
+with the entities the Neolink integration creates (the pictures from the camera are blurred):
+
+<p>
+  <img src="images/addon-configuration-en.png" alt="Neolink app configuration" width="49%">
+  <img src="images/camera-device-entities-en.png" alt="Reolink camera device with its entities" width="49%">
+</p>
+
 ## Entities
 
 Entity IDs are English in every Home Assistant language (e.g. `sensor.<camera>_battery` also in

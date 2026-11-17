@@ -77,6 +77,16 @@ encji pozostaną bez zmian.
 | **Tylko WebRTC** (domyślnie) | Jeden strumień kamery na podgląd, przez go2rtc (wbudowany w Home Assistant). Startuje najszybciej, a dźwięk nie odstaje od obrazu. |
 | **HLS i WebRTC** | Domyślne zachowanie Home Assistanta: frontend uruchamia obok WebRTC odtwarzacz HLS i trzyma go w tle, czyli drugi strumień kamery przez łącze komórkowe. Wybierz to tylko wtedy, gdy WebRTC u Ciebie nie działa (np. go2rtc jest wyłączony). |
 
+## Zrzuty ekranu
+
+Konfiguracja aplikacji (UID kamery zamaskowany) i urządzenie Reolink Go Plus / G330 (4G) z encjami,
+które tworzy integracja Neolink (obrazy z kamery rozmyte):
+
+<p>
+  <img src="images/addon-configuration-pl.png" alt="Konfiguracja aplikacji Neolink" width="49%">
+  <img src="images/camera-device-entities-pl.png" alt="Urządzenie kamery Reolink z encjami" width="49%">
+</p>
+
 ## Encje
 
 Identyfikatory encji są angielskie w każdym języku Home Assistant (np. `sensor.<camera>_battery`
